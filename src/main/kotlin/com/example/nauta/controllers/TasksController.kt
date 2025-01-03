@@ -43,7 +43,6 @@ class TasksController(private val taskService: TaskService) {
 
     @DeleteMapping("{id}")
     fun deleteTask(@PathVariable id: String) {
-        taskService.deleteTask(id)
 
         return taskService.deleteTask(id)
     }
