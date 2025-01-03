@@ -52,6 +52,10 @@ class TaskService(private val taskRepository: TaskInterface) {
         try {
             val task = taskDto.toTask()
 
+            if (task.title.isNullOrBlank()) {
+                throw InvalidRequestException("Task title is mandatory")
+            }
+
             val taskInfo = taskRepository.findById(taskId) ?: throw InvalidRequestException("Task doesn't exist")
             task.id = taskId
             task.createdAt = taskInfo.createdAt
