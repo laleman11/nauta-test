@@ -1,6 +1,8 @@
 package com.example.nauta.services
 
 import com.example.nauta.constants.States
+import com.example.nauta.dtos.TaskDto
+import com.example.nauta.dtos.toTask
 import com.example.nauta.entities.Task
 import com.example.nauta.exceptions.InvalidRequestException
 import com.example.nauta.interfaces.TaskInterface
@@ -103,18 +105,18 @@ class TaskServiceTest {
 
     @Test
     fun `should create task`() {
-        val task = Task(id = "2", title = "Task 2", "", States.TO_DO)
+        val task = TaskDto(title = "Task 2", "", "TO_DO")
 
-        every { taskRepository.save(any()) } returns task
+        every { taskRepository.save(any()) } returns task.toTask()
 
         val result = taskService.createTask(task)
 
-        assertEquals(task, result)
+        assertEquals(task.toTask(), result)
     }
 
     @Test
     fun `createTask should fails with an empty title`() {
-        val task = Task(id = "2", title = "", "", States.TO_DO)
+        val task = TaskDto(title = "", "", "TO_DO")
         val exception = assertThrows<InvalidRequestException> {
             taskService.createTask(task)
         }
@@ -123,29 +125,50 @@ class TaskServiceTest {
     }
 
     @Test
+    fun `createTask should fails with a wrong state`() {
+        val task = TaskDto(title = "", "", "TO_DOs")
+        val exception = assertThrows<InvalidRequestException> {
+            taskService.createTask(task)
+        }
+
+        assert(exception.message == "State only can be TO_DO, IN_PROGRESS or DONE")
+    }
+
+    @Test
     fun `should update task`() {
+        val taskDto = TaskDto(title = "Task 2", "", "TO_DO")
         val task = Task(id = "2", title = "Task 2", "", States.TO_DO)
         val task2 = Task(id = "2", title = "Task 2", "", States.IN_PROGRESS)
 
         every { taskRepository.findById(any()) } returns task
         every { taskRepository.save(any()) } returns task2
 
-        val result = taskService.updateTask(task2)
+        val result = taskService.updateTask("2", taskDto)
 
         assertEquals(task2, result)
     }
 
     @Test
     fun `updateTask should fail with task not found`() {
-        val task = Task(id = "2", title = "Task 2", "", States.IN_PROGRESS)
+        val task = TaskDto(title = "Task 2", "", "IN_PROGRESS")
 
         every { taskRepository.findById(any()) } returns null
 
         val exception = assertThrows<InvalidRequestException> {
-            taskService.updateTask(task)
+            taskService.updateTask("2", task)
         }
 
         assert(exception.message == "Task doesn't exist")
+    }
+
+    @Test
+    fun `updateTask should fails with a wrong state`() {
+        val task = TaskDto(title = "", "", "WRONG")
+        val exception = assertThrows<InvalidRequestException> {
+            taskService.updateTask("", task)
+        }
+
+        assert(exception.message == "State only can be TO_DO, IN_PROGRESS or DONE")
     }
 
     @Test

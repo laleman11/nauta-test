@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 data class Task(
     @Id var id: String? = null,
     var title: String?,
-    var desctiption: String?,
+    var description: String?,
     @Indexed
     var state: States,
     @CreatedDate
-    val creationDate: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = null,
     @LastModifiedDate
-    val lastUpdate: LocalDateTime? = null
+    var updatedAt: LocalDateTime? = null
 )

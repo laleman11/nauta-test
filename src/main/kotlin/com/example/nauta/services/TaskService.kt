@@ -1,5 +1,7 @@
 package com.example.nauta.services
 
+import com.example.nauta.dtos.TaskDto
+import com.example.nauta.dtos.toTask
 import com.example.nauta.entities.Task
 import com.example.nauta.exceptions.InvalidRequestException
 import com.example.nauta.interfaces.TaskInterface
@@ -32,21 +34,32 @@ class TaskService(private val taskRepository: TaskInterface) {
         return taskRepository.findByState(state, pageable)
     }
 
-    fun createTask(task: Task): Task {
-        task.id = null
+    fun createTask(taskDto: TaskDto): Task {
+        try {
+            val task = taskDto.toTask()
 
-        if (task.title.isNullOrBlank()) {
-            throw InvalidRequestException("Task title is mandatory")
+            if (task.title.isNullOrBlank()) {
+                throw InvalidRequestException("Task title is mandatory")
+            }
+
+            return taskRepository.save(task)
+        } catch (e: IllegalArgumentException) {
+            throw InvalidRequestException("State only can be TO_DO, IN_PROGRESS or DONE")
         }
-
-        return taskRepository.save(task)
     }
 
-    fun updateTask(task: Task): Task {
-        if (taskRepository.findById(task.id ?: "") == null) {
-            throw InvalidRequestException("Task doesn't exist")
+    fun updateTask(taskId: String, taskDto: TaskDto): Task {
+        try {
+            val task = taskDto.toTask()
+
+            val taskInfo = taskRepository.findById(taskId) ?: throw InvalidRequestException("Task doesn't exist")
+            task.id = taskId
+            task.createdAt = taskInfo.createdAt
+
+            return taskRepository.save(task)
+        } catch (e: IllegalArgumentException) {
+            throw InvalidRequestException("State only can be TO_DO, IN_PROGRESS or DONE")
         }
-        return taskRepository.save(task)
     }
 
     fun deleteTask(id: String) = taskRepository.deleteById(id)

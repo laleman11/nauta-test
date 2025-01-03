@@ -34,7 +34,10 @@ class TasksControllerTest {
 
     @Test
     fun `should get all tasks paginated`() {
-        val tasks = listOf(Task(id = "1", title = "Task 1", "", States.TO_DO), Task(id = "2", title = "Task 2", "", States.IN_PROGRESS))
+        val tasks = listOf(
+            Task(id = "1", title = "Task 1", "", States.TO_DO),
+            Task(id = "2", title = "Task 2", "", States.IN_PROGRESS)
+        )
         val pageRequest = PageRequest.of(0, 10)
         val page: Page<Task> = PageImpl(tasks, pageRequest, tasks.size.toLong())
 
@@ -50,7 +53,10 @@ class TasksControllerTest {
 
     @Test
     fun `should get all tasks with custom pagination`() {
-        val tasks = listOf(Task(id = "1", title = "Task 1", "", States.TO_DO), Task(id = "2", title = "Task 2", "", States.IN_PROGRESS))
+        val tasks = listOf(
+            Task(id = "1", title = "Task 1", "", States.TO_DO),
+            Task(id = "2", title = "Task 2", "", States.IN_PROGRESS)
+        )
         val pageRequest = PageRequest.of(0, 10)
         val page: Page<Task> = PageImpl(tasks, pageRequest, tasks.size.toLong())
 
@@ -66,7 +72,10 @@ class TasksControllerTest {
 
     @Test
     fun `should get tasks by state paginated`() {
-        val tasks = listOf(Task(id = "1", title = "Task 1", "", States.TO_DO), Task(id = "2", title = "Task 2", "", States.IN_PROGRESS))
+        val tasks = listOf(
+            Task(id = "1", title = "Task 1", "", States.TO_DO),
+            Task(id = "2", title = "Task 2", "", States.IN_PROGRESS)
+        )
         val pageRequest = PageRequest.of(0, 10)
         val page: Page<Task> = PageImpl(tasks, pageRequest, tasks.size.toLong())
 
@@ -82,7 +91,10 @@ class TasksControllerTest {
 
     @Test
     fun `should get tasks by state with custom pagination`() {
-        val tasks = listOf(Task(id = "1", title = "Task 1", "", States.TO_DO), Task(id = "2", title = "Task 2", "", States.IN_PROGRESS))
+        val tasks = listOf(
+            Task(id = "1", title = "Task 1", "", States.TO_DO),
+            Task(id = "2", title = "Task 2", "", States.IN_PROGRESS)
+        )
         val pageRequest = PageRequest.of(1, 3)
         val page: Page<Task> = PageImpl(tasks, pageRequest, tasks.size.toLong())
 
@@ -115,7 +127,7 @@ class TasksControllerTest {
     fun `should update task`() {
         val task = Task(id = "1", title = "Task 1", "", States.TO_DO)
 
-        every { taskService.updateTask(any()) } returns task
+        every { taskService.updateTask(any(), any()) } returns task
         mockMvc.perform(
             put("/tasks/1")
                 .contentType(MediaType.APPLICATION_JSON)

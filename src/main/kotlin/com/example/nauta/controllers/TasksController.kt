@@ -1,5 +1,6 @@
 package com.example.nauta.controllers
 
+import com.example.nauta.dtos.TaskDto
 import com.example.nauta.entities.Task
 import com.example.nauta.services.TaskService
 import org.springframework.data.domain.Page
@@ -31,15 +32,13 @@ class TasksController(private val taskService: TaskService) {
     }
 
     @PostMapping
-    fun createTask(@RequestBody task: Task): Task {
+    fun createTask(@RequestBody task: TaskDto): Task {
         return taskService.createTask(task)
     }
 
     @PutMapping("{id}")
-    fun updateTask(@PathVariable id: String, @RequestBody task: Task): Task {
-        task.id = id
-
-        return taskService.updateTask(task)
+    fun updateTask(@PathVariable id: String, @RequestBody task: TaskDto): Task {
+        return taskService.updateTask(id, task)
     }
 
     @DeleteMapping("{id}")
